@@ -12,7 +12,7 @@
 
 ## 本地开发
 
-需要 Node ≥ 20.12 和 pnpm ≥ 9。
+需要 Node ≥ 22.12 和 pnpm ≥ 9（或 npm ≥ 10 作回落）。
 
 ```bash
 pnpm install

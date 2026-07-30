@@ -70,3 +70,13 @@
 - 复查 valaxy 1.0.0-rc.1 的 `engines.node >=22.12.0` 是硬要求。
 - `package.json` `engines` 改为 `>=22.12.0`，CI `node-version` 从 20 改为 22。
 - **遗留**：本机 Node v20.20.2 不满足；本地无法跑 build（与 DNS 解析问题叠加放弃），CI（Ubuntu + Node 22）会做实际验证。
+
+### 2026-07-31 01:25 — 首次提交并推送
+- `git add . && git commit` → commit `7197724 feat: initial valaxy blog scaffold`
+- `git push -u origin main` 成功（远端 `main` 分支由空创建）
+- 远端仓库 https://github.com/always1ov/always1ov 已可见所有 13 个文件
+- 待办：README 里"Node ≥ 20.12"文案同步修正为 22.12
+
+### 2026-07-31 01:28 — README 版本修正
+- README.md "本地开发" 一段把 Node 最低版本从 20.12 改为 22.12（valaxy 硬要求）
+- 未 commit，等下一步打包提交
