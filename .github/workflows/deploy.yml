@@ -22,7 +22,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # pnpm 是 valaxy 官方推荐；如 pnpm 安装失败会自动回落到 npm
       - name: Setup pnpm
         id: pnpm-setup
         uses: pnpm/action-setup@v4
@@ -34,7 +33,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: ${{ steps.pnpm-setup.outputs.cache-hit == 'true' && 'pnpm' || 'npm' }}
 
       - name: Install dependencies (pnpm)
         if: steps.pnpm-setup.outcome == 'success'
@@ -45,12 +43,12 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Build
+        run: npm run build
+
+      - name: Verify dist exists
         run: |
-          if [ -f node_modules/.bin/valaxy ]; then
-            npx valaxy build --ssg
-          else
-            npm run build
-          fi
+          test -d dist || (echo "::error::dist/ not produced by build" && exit 1)
+          ls -la dist | head -20
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
