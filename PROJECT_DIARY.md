@@ -80,3 +80,10 @@
 ### 2026-07-31 01:28 — README 版本修正
 - README.md "本地开发" 一段把 Node 最低版本从 20.12 改为 22.12（valaxy 硬要求）
 - 未 commit，等下一步打包提交
+
+### 2026-07-31 01:35 — CI 验证通过（关键里程碑）
+- 第三次 push 触发 Actions run #30570247575
+- **build job 全部 ✓**：Setup pnpm / Setup Node(v22) / `pnpm install` / `npm run build` / dist 验证 / Upload artifact
+- deploy job 失败，原因 `CLOUDFLARE_PROJECT_NAME` 变量未配置（预期内，需用户操作）
+- 结论：本项目的 Valaxy 配置在 Node 22 上可正常构建，静态产物已能生成
+- 下一步：等用户在 CF Dashboard 建 Pages 项目 + 在 GitHub Repo 填 3 个 Secrets/Variables，再触发一次 push 即可上线
