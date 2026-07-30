@@ -1,0 +1,87 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # pnpm 是 valaxy 官方推荐；如 pnpm 安装失败会自动回落到 npm
+      - name: Setup pnpm
+        id: pnpm-setup
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+        continue-on-error: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: ${{ steps.pnpm-setup.outputs.cache-hit == 'true' && 'pnpm' || 'npm' }}
+
+      - name: Install dependencies (pnpm)
+        if: steps.pnpm-setup.outcome == 'success'
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Install dependencies (npm fallback)
+        if: steps.pnpm-setup.outcome != 'success'
+        run: npm install --no-audit --no-fund
+
+      - name: Build
+        run: |
+          if [ -f node_modules/.bin/valaxy ]; then
+            npx valaxy build --ssg
+          else
+            npm run build
+          fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: production
+      url: ${{ steps.deployment.outputs.page-url }}
+    steps:
+      - name: Deploy to Cloudflare Pages via Wrangler
+        id: deployment
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PROJECT_NAME: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
+        run: |
+          if [ -z "$CLOUDFLARE_PROJECT_NAME" ]; then
+            echo "::error::CLOUDFLARE_PROJECT_NAME variable is not set. Configure it under Repository Variables."
+            exit 1
+          fi
+          npx wrangler pages deploy ./dist \
+            --project-name "$CLOUDFLARE_PROJECT_NAME" \
+            --commit-dirty=true \
+            --branch main

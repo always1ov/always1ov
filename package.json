@@ -1,0 +1,26 @@
+{
+  "name": "always1ov-blog",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal blog built with Valaxy, deployed on Cloudflare Pages.",
+  "scripts": {
+    "dev": "valaxy",
+    "build": "valaxy build --ssg",
+    "build:spa": "valaxy build",
+    "preview": "vite preview",
+    "rss": "valaxy rss",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "valaxy": "1.0.0-rc.1",
+    "valaxy-theme-yun": "1.0.0-rc.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "wrangler": "^4.116.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}
