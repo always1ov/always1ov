@@ -1,0 +1,10 @@
+// 主题样式入口。Valaxy 会按 [themeRoot, userRoot] 的顺序加载，
+// 所以用户在自己根目录写的 styles/index.scss 永远能覆盖这里。
+@use './tokens.scss';
+@use './reset.scss';
+@use './base.scss';
+@use './layout.scss';
+@use './components.scss';
+@use './markdown.scss';
+@use './pages.scss';
+@use './shiki.scss';

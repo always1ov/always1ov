@@ -1,0 +1,93 @@
+/* ── base ───────────────────────────────────────────────────────
+   正文用无衬线（中文小字号下衬线在 Windows 上会糊），
+   标题用高对比衬线，元信息用等宽。三种字体各司其职，不混用。 */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--t-0);
+  line-height: var(--lh-body);
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition: background var(--fast) linear, color var(--fast) linear;
+}
+
+/* 纸张颗粒。很轻，但能让纯色背景不那么「屏幕」。 */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Valaxy 的全局 reset 会给所有 a 上色并加粗（--va-c-link）。
+   这个主题里链接的颜色由各自的组件决定，所以先按「继承」压回去，
+   用 body 前缀是为了优先级够高，而不是靠加载顺序赌运气。 */
+body a {
+  color: inherit;
+  font-weight: inherit;
+}
+
+/* 等宽小标签：整站的「刻度」。 */
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-mute);
+}
+
+.serif { font-family: var(--font-display); font-weight: 400; }
+
+.dim { color: var(--fg-mute); }
+
+/* 通用的下划线链接：hover 时从左往右画出来 */
+.link {
+  position: relative;
+  text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size var(--fast) var(--ease), color var(--fast) linear;
+}
+.link:hover, .link:focus-visible { background-size: 100% 1px; color: var(--accent); }
+
+.rule {
+  height: 1px;
+  background: var(--line);
+  border: 0;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+.skip:focus { left: 1rem; top: 1rem; }
+
+/* 滚动条：细一点、跟着主题走 */
+* { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--fg-faint); }

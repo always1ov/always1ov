@@ -1,24 +1,30 @@
 {
-  "name": "always1ov-blog",
-  "type": "module",
-  "version": "0.1.0",
+  "name": "always1ov",
+  "version": "1.0.0",
   "private": true,
-  "description": "Personal blog built with Valaxy, deployed on Cloudflare Pages.",
+  "type": "module",
+  "description": "always1ov 的个人网站。Valaxy + 自写主题 valaxy-theme-always。",
+  "homepage": "https://always1ov.pages.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/always1ov/always1ov.git"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "valaxy",
     "build": "valaxy build --ssg",
-    "build:spa": "valaxy build",
     "preview": "vite preview",
     "rss": "valaxy rss",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "vue-tsc --noEmit",
+    "banner": "node scripts/banner.mjs"
   },
   "dependencies": {
-    "valaxy": "1.0.0-rc.1",
-    "valaxy-theme-yun": "1.0.0-rc.1"
+    "valaxy": "1.0.0-rc.1"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
-    "wrangler": "^4.116.0"
+    "vue-tsc": "^2.2.0",
+    "wrangler": "^4.125.0"
   },
   "engines": {
     "node": ">=22.12.0"

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "jsx": "preserve",
-    "lib": ["DOM", "ESNext"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -17,11 +17,12 @@
     ],
     "strict": true,
     "strictNullChecks": true,
-    "noUnusedLocals": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipDefaultLibCheck": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noEmit": true
   },
+  "include": ["*.ts", "theme/**/*.ts", "theme/**/*.vue", "pages/**/*.vue"],
   "exclude": ["dist", "node_modules"]
 }

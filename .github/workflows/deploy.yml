@@ -1,10 +1,11 @@
-name: Deploy to Cloudflare Pages
+name: Build & Deploy
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -12,74 +13,86 @@ concurrency:
 
 jobs:
   build:
+    name: 构建
     runs-on: ubuntu-latest
     timeout-minutes: 15
-
     permissions:
       contents: read
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        id: pnpm-setup
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-        continue-on-error: true
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
-      - name: Install dependencies (pnpm)
-        if: steps.pnpm-setup.outcome == 'success'
-        run: pnpm install --no-frozen-lockfile
+      - name: 安装依赖
+        run: npm ci --no-audit --no-fund
 
-      - name: Install dependencies (npm fallback)
-        if: steps.pnpm-setup.outcome != 'success'
-        run: npm install --no-audit --no-fund
-
-      - name: Build
+      - name: 构建站点
         run: npm run build
 
-      - name: Verify dist exists
+      - name: 检查产物
         run: |
-          test -d dist || (echo "::error::dist/ not produced by build" && exit 1)
-          ls -la dist | head -20
+          test -f dist/index.html   || { echo "::error::缺 dist/index.html"; exit 1; }
+          test -f dist/404.html     || { echo "::error::缺 dist/404.html"; exit 1; }
+          test -f dist/atom.xml     || { echo "::error::缺 dist/atom.xml"; exit 1; }
+          echo "产物清单："
+          ls -la dist
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: 上传产物
+        uses: actions/upload-artifact@v4
         with:
-          path: ./dist
+          name: site
+          path: dist
+          retention-days: 7
 
   deploy:
+    name: 部署到 Cloudflare Pages
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
       contents: read
-      pages: write
-      id-token: write
     environment:
       name: production
-      url: ${{ steps.deployment.outputs.page-url }}
+      url: ${{ steps.deploy.outputs.url }}
+
     steps:
-      - name: Deploy to Cloudflare Pages via Wrangler
-        id: deployment
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 取回产物
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: dist
+
+      - name: 安装 wrangler
+        run: npm ci --no-audit --no-fund
+
+      - name: 推到 Cloudflare Pages
+        id: deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_PROJECT_NAME: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
+          PROJECT_NAME: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
         run: |
-          if [ -z "$CLOUDFLARE_PROJECT_NAME" ]; then
-            echo "::error::CLOUDFLARE_PROJECT_NAME variable is not set. Configure it under Repository Variables."
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::缺少 CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID（仓库 Settings → Secrets）"
+            exit 1
+          fi
+          if [ -z "$PROJECT_NAME" ]; then
+            echo "::error::缺少变量 CLOUDFLARE_PROJECT_NAME（仓库 Settings → Variables）"
             exit 1
           fi
           npx wrangler pages deploy ./dist \
-            --project-name "$CLOUDFLARE_PROJECT_NAME" \
-            --commit-dirty=true \
-            --branch main
+            --project-name "$PROJECT_NAME" \
+            --branch main \
+            --commit-dirty=true

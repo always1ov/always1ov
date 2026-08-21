@@ -1,93 +1,81 @@
-# AGENTS.md — 给所有 AI 代理的操作指引
+# AGENTS.md — 给 AI 代理的操作指引
 
-> 本文件描述**如何操作本项目**。项目**当前状态**与历史见 `PROJECT_DIARY.md`。
-> 任何 AI 在动手前必须读完 `PROJECT_DIARY.md` 的"当前状态"与最近 3 条详细条目。
+> 本文说明**怎么改这个项目**。项目的**当前状态和历史**在 `PROJECT_DIARY.md`。
+> 动手之前先读那份日记的「当前状态」和最近三条详细条目。
 
-## 1. 项目概况
+## 1. 这是什么
 
 - 仓库：https://github.com/always1ov/always1ov
-- 类型：个人博客（Valaxy 静态站点）
-- 部署目标：Cloudflare Pages
-- 部署触发：`push` 到 `main` 或 `pull_request` 触发 `.github/workflows/deploy.yml`
+- 类型：个人网站（Valaxy 静态站点）
+- 主题：`valaxy-theme-always`，**自写，就在本仓库的 `theme/` 目录**，不是 npm 依赖
+- 线上：https://always1ov.pages.dev
+- 部署：push 到 `main` → GitHub Actions → Cloudflare Pages
 
-## 2. 必备环境
+## 2. 环境
 
-| 工具 | 版本 | 备注 |
+| 工具 | 版本 | 说明 |
 |---|---|---|
-| Node | ≥ 22.12 | valaxy 1.0.0-rc.1 强制要求 ≥22.12；本机实测 v20.20.2 不满足，故本地不跑 build，靠 CI |
-| pnpm | ≥ 9 | 通过 corepack 或 `npm i -g pnpm@9` 安装；若 pnpm 安装/解析失败可临时回落 npm |
-| npm | ≥ 10 | 自带 Node；本项目 scripts 同时兼容 pnpm 与 npm |
-| git | 任意 | |
-| gh | 最新 | 需要 `repo` + `workflow` scope 的 PAT |
+| Node | ≥ 22.12 | Valaxy 1.0.0-rc.1 的硬要求 |
+| npm | ≥ 10 | 用 `npm ci` 保证和 lockfile 一致 |
 
 ## 3. 常用命令
 
 ```bash
-# 推荐（pnpm）
-pnpm install
-pnpm dev                # http://localhost:4859
-pnpm build              # 产物在 ./dist
-
-# npm 回落（若 pnpm 在当前网络下解析 DNS 失败）
 npm install
-npm run dev
-npm run build
-
-# 公共
-npx valaxy rss          # 单独生成 RSS
-npx tsc --noEmit        # 类型检查
+npm run dev       # http://localhost:4859，改任何文件都会热更新
+npm run build     # SSG 构建，产物在 ./dist
+npm run typecheck # vue-tsc
+npm run banner    # 重新生成 README 横幅（改了配色才需要）
 ```
 
-部署不通过 CLI 触发，全靠 GitHub Actions。
+## 4. 文件地图
 
-## 4. 改动后必须做的事
-
-每次任何文件被改动：
-
-1. **更新 `PROJECT_DIARY.md`**：
-   - 如果是普通小修，更新"当前状态"段
-   - 如果是一个里程碑（新增模块、改部署、删/加依赖、关键 bug 修复），**追加一条**到"详细条目（Append-only Log）"，并**记录到"决策日志"** 如果做了技术决策
-   - 不要删除旧条目（日记是 append-only）
-2. **commit message 规范**：`type(scope): subject`，例如 `feat(posts): add first article`；如果是改日记用 `diary: update`
-3. **不要把任何 secret 写进仓库**：
-   - 凭据只在 GitHub Repo Secrets 里：`CLOUDFLARE_API_TOKEN`、`CLOUDFLARE_ACCOUNT_ID`
-   - 变量在 Repo Variables 里：`CLOUDFLARE_PROJECT_NAME`
-   - 任何 `.env`、`.dev.vars`、`.wrangler/` 都在 .gitignore 里
-
-## 5. 文件地图
-
-| 改这个 → | 动哪个文件 |
+| 想改什么 | 改哪个文件 |
 |---|---|
-| 站点标题/作者/社交/搜索 | `site.config.ts` |
-| 主题、菜单、页脚、备案 | `valaxy.config.ts` |
-| 首页 | `pages/index.md` |
+| 站点标题 / 作者 / 描述 / 阅读速度 | `site.config.ts` |
+| 导航、此刻、社交、首屏流场参数、页脚 | `valaxy.config.ts` 的 `themeConfig` |
+| 代码块配色 | `valaxy.config.ts` 里的 `shikiTheme()` |
+| 颜色、字体、字号、间距 | `theme/styles/tokens.scss` |
+| 正文排版 | `theme/styles/markdown.scss` |
+| 代码块外观 | `theme/styles/shiki.scss` |
+| 页面结构 | `theme/layouts/*.vue` |
+| 部件（顶栏、页脚、画布、命令面板、目录） | `theme/components/*.vue` |
+| 首页「自述」那段文字 | `pages/index.md` 的正文 |
 | 关于页 | `pages/about.md` |
 | 新文章 | `pages/posts/<slug>.md` |
-| 静态资源（图片、favicon） | `public/` |
+| 静态资源（图片、favicon、_headers） | `public/` |
 | 部署流程 | `.github/workflows/deploy.yml` |
-| 项目当前状态/历史 | `PROJECT_DIARY.md` |
-| 给 AI 的操作指引（本文件） | `AGENTS.md` |
 
-## 6. 部署链路（运维速查）
+## 5. 这套设计的规矩
 
-- push main → 跑 `pnpm install` → `pnpm build` → `wrangler pages deploy ./dist --project-name=$CLOUDFLARE_PROJECT_NAME`
-- 部署日志：仓库 Actions 标签页
-- 线上：https://always1ov.pages.dev（首次需要在 CF Dashboard 创建同名 Pages 项目并绑仓库）
+改样式之前先读一遍，否则很容易把它改成一个「普通模板」：
 
-## 7. 接手检查清单（AI 第一次接手时按此顺序执行）
+1. **只有两种颜色**：墨/纸（随主题反转）加一个朱砂红 `--accent`。想加第三种颜色，先说服自己为什么非加不可。
+2. **三种字体各司其职**：标题衬线（`--font-display`）、正文无衬线（`--font-sans`）、元信息等宽（`--font-mono`）。不混用。
+3. **中文一律用系统字体**。不要为了好看引入几 MB 的中文网络字体。
+4. **留白有层级**：标题上方的空白永远远大于下方。层级靠空白说话，不靠字号。
+5. **动效要有理由**：一个动效要么让「这里可以点」变明显，要么什么都别做。所有动效必须听 `prefers-reduced-motion`。
+6. **内容优先于脚本**：入场动画由 `.js [data-reveal]` 控制，`.js` 是启动脚本加的。任何时候脚本挂了，内容必须还在页面上。
 
-- [ ] 读 `PROJECT_DIARY.md` "当前状态" + 最近 3 条详细条目
-- [ ] 读本文件
-- [ ] 跑 `pnpm install`
-- [ ] 跑 `pnpm build` 验证当前 main 是可构建的
-- [ ] 浏览 `./dist/` 看产物结构是否合理
-- [ ] 确认手上的任务和日记里的"进行中的任务"对得上
-- [ ] 开工；每改一文件 → 更新日记
+## 6. 几个容易踩的坑
 
-## 8. 边界 / 不要做的事
+- **类名会撞 UnoCSS**。Valaxy 内置了 `btn`、`flex-center`、`va-card` 等快捷类。主题里的按钮叫 `.action` 就是因为 `.btn` 被占了。加新类名前先确认没撞上。
+- **正文必须用 `<ValaxyMd>` 包**。代码复制按钮、表格滚动容器、目录依赖的 `content-updated` 钩子全挂在它身上。自己写 `<div class="markdown-body">` 会把这些全丢掉。
+- **`<ClientOnly>` 里的组件挂载晚于 `ValaxyMd`**，会错过那一次 `runContentUpdated()`。`TheToc` 自己补调了一次，别删。
+- **跟「今天」有关的值要放进 `<ClientOnly>`**。构建时和访问时不是同一天，否则 hydration 对不上。
+- **Shiki 只加载 `markdown.languages` 里列出来的语言**。没列的语言不会报错，只是不高亮。
+- **Valaxy 会从 git 补 `date` 和 `updated`**。不想被当成文章的页面（比如归档页自己）要写 `hide: all`。
 
-- ❌ 不要把 PAT / token / `.env` 内容 commit 进来
+## 7. 改完之后要做的事
+
+1. 跑 `npm run build`，确认能构建。
+2. **更新 `PROJECT_DIARY.md`**：小修改「当前状态」；里程碑（加模块、改部署、增删依赖、关键 bug）追加一条到「详细条目」，做了技术决策就记进「决策日志」。日记是 append-only，不要删旧条目。
+3. commit 信息用 `type(scope): subject`，例如 `feat(theme): add reading progress`；只改日记用 `diary: update`。
+
+## 8. 不要做的事
+
+- ❌ 不要把 token / `.env` 提交进来
 - ❌ 不要删旧日记条目
-- ❌ 不要绕过 GitHub Actions 手动 `wrangler deploy`（除非紧急热修，且事后回写日记）
-- ❌ 不要 `pnpm` 之外用 `npm`/`yarn` 装依赖（lockfile 会乱）
-- ❌ 不要新增与博客无关的大功能（评论、统计、看板娘等），需要先和用户确认
+- ❌ 不要绕过 Actions 手动 `wrangler deploy`（除非紧急热修，事后补记日记）
+- ❌ 不要为了省事去装一个现成主题——这个站的全部意义就是主题是自己的
+- ❌ 不要新增与「写字」无关的大功能（评论、统计、看板娘），要加先问用户

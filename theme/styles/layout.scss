@@ -1,0 +1,176 @@
+/* ── layout ─────────────────────────────────────────────────────
+   一个规格表式的两栏网格：左边永远是等宽编号，右边是内容。
+   窄屏时左栏塌到内容上方，变成一行小标签。 */
+
+.wrap {
+  width: min(100% - var(--gutter) * 2, var(--frame));
+  margin-inline: auto;
+}
+
+.section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem 3rem;
+  padding-block: clamp(3rem, 6vw, 5.5rem);
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 60rem) {
+  .section {
+    grid-template-columns: 13rem minmax(0, 1fr);
+  }
+}
+
+.section-label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+}
+
+@media (min-width: 60rem) {
+  .section-label {
+    position: sticky;
+    top: 6.5rem;
+    align-self: start;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+}
+
+.section-label .n {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.section-body > * + * { margin-top: 1.5rem; }
+
+/* ── 顶栏 ── */
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in oklab, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--fast) linear;
+}
+.masthead[data-stuck='true'] { border-bottom-color: var(--line); }
+
+.masthead-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  height: 4.25rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.brand .seal {
+  width: 0.62rem;
+  height: 0.62rem;
+  background: var(--accent);
+  transition: transform var(--slow) var(--ease);
+}
+.brand:hover .seal { transform: rotate(45deg) scale(1.15); }
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.7rem, 2.5vw, 2rem);
+}
+
+/* 导航文字不折行——中文两个字被劈成上下两行很难看 */
+.nav-link { white-space: nowrap; }
+
+.nav-link {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: var(--t--1);
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  color: var(--fg-mute);
+  padding-block: 0.4rem;
+  transition: color var(--fast) linear;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0.15rem;
+  width: 100%;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--fast) var(--ease);
+}
+.nav-link:hover, .nav-link:focus-visible { color: var(--fg); }
+.nav-link:hover::after, .nav-link[aria-current='page']::after { transform: scaleX(1); }
+.nav-link[aria-current='page'] { color: var(--fg); }
+
+.masthead-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: clamp(0.2rem, 1vw, 0.6rem);
+}
+
+/* ── 页脚 ── */
+.colophon {
+  border-top: 1px solid var(--line);
+  padding-block: 3rem 4rem;
+}
+.colophon-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 48rem) {
+  .colophon-grid { grid-template-columns: 1fr auto; align-items: end; }
+}
+.colophon .mark {
+  font-family: var(--font-display);
+  font-size: var(--t-3);
+  line-height: 1;
+}
+.colophon-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+
+/* 整句话不做大写转换——把 cookie 变成 COOKIE 读着像在喊 */
+.colophon-note {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  max-width: 46ch;
+}
+
+.colophon-right {
+  display: grid;
+  gap: 0.9rem;
+  justify-items: start;
+}
+
+main { display: block; }

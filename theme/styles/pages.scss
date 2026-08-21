@@ -1,0 +1,213 @@
+/* ── pages ──────────────────────────────────────────────────────
+   单页特有的排版。文章页是重点：标题区要能撑住场面，
+   正文区要安静，两者靠一条细线分开。 */
+
+/* ── 文章 ── */
+.article-head {
+  padding-block: clamp(3rem, 10vh, 6.5rem) clamp(2rem, 5vh, 3.5rem);
+  border-bottom: 1px solid var(--line);
+}
+.article-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+}
+.article-kicker .sep { color: var(--accent); }
+.article-title {
+  margin-top: 1.1rem;
+  max-width: 26ch;
+  font-family: var(--font-display);
+  font-size: var(--t-4);
+  line-break: strict;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.article-standfirst {
+  margin-top: 1.4rem;
+  max-width: 46ch;
+  font-size: var(--t-1);
+  line-height: 1.6;
+  color: var(--fg-mute);
+  text-wrap: pretty;
+}
+
+.article-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+  padding-block: clamp(2.5rem, 6vh, 4.5rem) clamp(3rem, 8vh, 6rem);
+}
+@media (min-width: 68rem) {
+  .article-layout { grid-template-columns: minmax(0, 1fr) 15rem; gap: clamp(3rem, 6vw, 6rem); }
+}
+
+.toc {
+  position: sticky;
+  top: 6.5rem;
+  align-self: start;
+  max-height: calc(100svh - 9rem);
+  overflow-y: auto;
+  order: -1;
+}
+@media (min-width: 68rem) { .toc { order: 0; } }
+.toc-title {
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--line);
+}
+.toc ul { margin-top: 0.7rem; }
+.toc a {
+  display: block;
+  padding: 0.32rem 0 0.32rem 0.7rem;
+  border-left: 1px solid var(--line);
+  font-size: var(--t--1);
+  line-height: 1.45;
+  color: var(--fg-mute);
+  text-decoration: none;
+  transition: color var(--fast) linear, border-color var(--fast) linear;
+}
+.toc a:hover { color: var(--fg); }
+.toc a[data-active='true'] { color: var(--accent); border-left-color: var(--accent); }
+.toc .lv3 { padding-left: 1.5rem; }
+
+.article-foot {
+  border-top: 1px solid var(--line);
+  padding-block: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.adjacent { display: grid; gap: 0; border-top: 1px solid var(--line); }
+@media (min-width: 48rem) { .adjacent { grid-template-columns: 1fr 1fr; } }
+.adjacent a {
+  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 2vw, 1.5rem);
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  display: grid;
+  gap: 0.5rem;
+  transition: background var(--fast) linear, color var(--fast) linear;
+}
+@media (min-width: 48rem) { .adjacent a + a { border-left: 1px solid var(--line); } }
+.adjacent a:hover { background: var(--accent); color: var(--accent-fg); }
+.adjacent a:hover .mono { color: color-mix(in oklab, var(--accent-fg) 75%, transparent); }
+.adjacent .t {
+  font-family: var(--font-display);
+  font-size: var(--t-1);
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.adjacent .next { text-align: right; }
+
+/* ── 归档 ── */
+.page-head {
+  padding-block: clamp(3.5rem, 12vh, 7rem) clamp(2rem, 4vh, 3rem);
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: var(--t-4);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.02em;
+}
+/* 标题末尾那枚朱红方块。原来用的是斜体的「。」，
+   但斜体的中文句号在两种主题下都像一个打错的字母 o。 */
+.seal-dot {
+  display: inline-block;
+  width: 0.16em;
+  height: 0.16em;
+  margin-left: 0.16em;
+  vertical-align: baseline;
+  background: var(--accent);
+}
+.page-lede {
+  margin-top: 1.2rem;
+  max-width: 44ch;
+  font-size: var(--t-1);
+  color: var(--fg-mute);
+  text-wrap: pretty;
+}
+
+.year-block { padding-top: 2.5rem; }
+.year-mark {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+}
+.year-mark .y {
+  font-family: var(--font-display);
+  font-size: var(--t-3);
+  line-height: 1;
+  color: var(--fg-faint);
+}
+.year-mark .c {
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.1em;
+  color: var(--fg-faint);
+}
+
+.stat-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 3rem;
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.stat { display: grid; gap: 0.2rem; }
+.stat .v {
+  font-family: var(--font-display);
+  font-size: var(--t-2);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.stat .k {
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+
+/* ── 404 ── */
+.lost {
+  display: grid;
+  place-items: center;
+  min-height: 72svh;
+  text-align: center;
+  gap: 1.5rem;
+  padding-block: 4rem;
+}
+.lost-code {
+  font-family: var(--font-display);
+  font-size: var(--t-5);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+}
+.lost-code .em { font-style: italic; color: var(--accent); }
+
+/* 独立页面的正文区 */
+.page-body { padding-bottom: clamp(3rem, 8vh, 6rem); }
+
+/* 首页「自述」和归档页的引子：字大一点，不用正文的 measure */
+.home-intro,
+.page-lede.markdown-body {
+  max-width: 52ch;
+  font-size: var(--t-1);
+  line-height: 1.65;
+}
+.page-lede.markdown-body { color: var(--fg-mute); }

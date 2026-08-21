@@ -1,0 +1,84 @@
+// ── tokens ─────────────────────────────────────────────────────
+// 全站只有一个彩色：朱砂红。除此之外全是黑白灰。
+// 克制是这套设计的全部性格——每多一种颜色，重点就少一分。
+//
+// Valaxy 用 <html class="dark"> 切换暗色，所以：
+//   :root      → 昼（纸）
+//   html.dark  → 夜（墨）
+// 默认是夜，见 theme/valaxy.config.ts 里的 initialValue。
+
+:root {
+  color-scheme: light;
+
+  // 昼：暖纸
+  --bg:        #f2efe7;
+  --bg-raise:  #fbf9f4;
+  --bg-sunk:   #e7e3d8;
+  --fg:        #17160f;
+  --fg-mute:   #635e53;
+  --fg-faint:  #9a9488;
+  --line:      color-mix(in oklab, var(--fg) 16%, transparent);
+  --line-soft: color-mix(in oklab, var(--fg) 8%, transparent);
+  --accent:    #dd3a18;
+  --accent-fg: #fbf9f4;
+  --grain:     0.05;
+
+  // 字体：标题衬线、正文无衬线、元信息等宽，各司其职，不混用。
+  // 中文一律用系统字体——一套中文字体动辄几 MB，不值得让所有人多等两秒。
+  --font-display: 'Instrument Serif', 'Songti SC', 'Source Han Serif SC', 'Noto Serif CJK SC', 'SimSun', serif;
+  --font-sans: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  // 字号：随视口流动，不设断点
+  --t--2: clamp(0.66rem, 0.64rem + 0.08vw, 0.72rem);
+  --t--1: clamp(0.78rem, 0.76rem + 0.1vw, 0.85rem);
+  --t-0:  clamp(1rem, 0.97rem + 0.14vw, 1.08rem);
+  --t-1:  clamp(1.2rem, 1.14rem + 0.3vw, 1.4rem);
+  --t-2:  clamp(1.5rem, 1.36rem + 0.7vw, 2rem);
+  --t-3:  clamp(2rem, 1.7rem + 1.5vw, 3.1rem);
+  --t-4:  clamp(2.6rem, 1.9rem + 3.4vw, 5rem);
+  --t-5:  clamp(3.4rem, 1.2rem + 9.5vw, 9rem);
+
+  // 节奏
+  --gutter: clamp(1.25rem, 4vw, 4.5rem);
+  --measure: 68ch;
+  --frame: 1360px;
+  --lh-tight: 1.05;
+  --lh-snug: 1.35;
+  --lh-body: 1.85;
+
+  // 动效
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --fast: 180ms;
+  --slow: 620ms;
+}
+
+html.dark {
+  color-scheme: dark;
+
+  // 夜：暖白落在近黑上。不用纯白，纯白在深色底上会「发光」，长文读着累。
+  --bg:        #0b0b0c;
+  --bg-raise:  #131315;
+  --bg-sunk:   #070708;
+  --fg:        #e9e4da;
+  --fg-mute:   #9a948a;
+  --fg-faint:  #625d55;
+  --line:      color-mix(in oklab, var(--fg) 14%, transparent);
+  --line-soft: color-mix(in oklab, var(--fg) 7%, transparent);
+  --accent:    #ff4a2b;
+  --accent-fg: #0b0b0c;
+  --grain:     0.035;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --fast: 1ms; --slow: 1ms; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "valaxy-theme-always",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "always1ov 的专属 Valaxy 主题：两种颜色、三种字体、一条永不抬笔的线。",
+  "author": "always1ov",
+  "license": "MIT",
+  "keywords": ["valaxy", "valaxy-theme", "theme", "blog"],
+  "main": "index.ts",
+  "module": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./types": "./types/index.ts",
+    "./*": "./*"
+  }
+}

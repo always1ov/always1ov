@@ -1,0 +1,19 @@
+<!-- 这个文件里的标签会被 Valaxy 合进最终页面。 -->
+<head>
+  <script>
+    // 首帧就要是对的颜色。晚一帧用户就会看见一次闪白。
+    // vueuse 的 useDark 把选择存在 localStorage 的 `vueuse-color-scheme` 里，
+    // 这里提前读一次，把 .dark 打上去。
+    ;(function () {
+      try {
+        var v = localStorage.getItem('vueuse-color-scheme') || 'dark'
+        var dark = v === 'dark' || (v === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.classList.toggle('dark', dark)
+      } catch (e) {
+        document.documentElement.classList.add('dark')
+      }
+      // 有脚本才启用入场动画；脚本挂了内容也必须在
+      document.documentElement.classList.add('js')
+    })()
+  </script>
+</head>

@@ -1,0 +1,433 @@
+/* ── components ─────────────────────────────────────────────────
+   整站只有三个真正的「部件」：巨型标题、条目行、命令面板。
+   其他都是排版。 */
+
+/* ── 首屏 ── */
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: min(88svh, 54rem);
+  padding-block: clamp(4rem, 12vh, 9rem) clamp(2.5rem, 6vh, 4rem);
+  overflow: hidden;
+}
+
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.85;
+  mask-image: radial-gradient(120% 90% at 60% 40%, #000 30%, transparent 78%);
+  -webkit-mask-image: radial-gradient(120% 90% at 60% 40%, #000 30%, transparent 78%);
+}
+
+.hero > *:not(.hero-canvas) { position: relative; z-index: 1; }
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: var(--t-5);
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  margin-block: 0.15em 0.35em;
+}
+.wordmark .em {
+  font-style: italic;
+  color: var(--accent);
+}
+.wordmark .dot {
+  display: inline-block;
+  vertical-align: middle;
+  width: 0.14em;
+  height: 0.14em;
+  margin-inline: 0.16em 0.2em;
+  background: var(--accent);
+  transform: translateY(-0.15em);
+}
+
+/* 每段整体不断行——否则窄屏上会从 ALWA / YS 中间劈开 */
+.wordmark .word { display: inline-block; white-space: nowrap; }
+
+/* 每个字母单独入场 */
+.wordmark .ch {
+  display: inline-block;
+  animation: rise var(--slow) var(--ease) both;
+  animation-delay: calc(var(--i) * 45ms);
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(0.35em) rotate(2deg); }
+  to { opacity: 1; transform: none; }
+}
+
+.hero-lede {
+  max-width: 34ch;
+  font-size: var(--t-1);
+  line-height: 1.6;
+  color: var(--fg-mute);
+  text-wrap: pretty;
+}
+
+.hero-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: clamp(2.5rem, 8vh, 5rem);
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.seed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+.seed button {
+  color: var(--fg-mute);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--line);
+  transition: color var(--fast) linear;
+}
+.seed button:hover { color: var(--accent); text-decoration-color: var(--accent); }
+
+.scroll-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  text-decoration: none;
+}
+.scroll-cue i {
+  width: 2.5rem;
+  height: 1px;
+  background: currentColor;
+  animation: cue 2.4s var(--ease) infinite;
+  transform-origin: left;
+}
+@keyframes cue {
+  0%, 100% { transform: scaleX(0.4); opacity: 0.5; }
+  50% { transform: scaleX(1); opacity: 1; }
+}
+
+/* ── 条目行：文章列表 / 社交链接共用 ── */
+.rows { border-top: 1px solid var(--line); }
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0.4rem 1.25rem;
+  padding: clamp(1.1rem, 2.4vw, 1.7rem) clamp(0.5rem, 1.5vw, 1rem);
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  isolation: isolate;
+  transition: color var(--fast) linear, padding-left var(--slow) var(--ease);
+}
+
+/* 从左侧刷过来的填色 */
+.row::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--slow) var(--ease);
+}
+.row:hover, .row:focus-visible { color: var(--accent-fg); padding-left: clamp(1rem, 2.5vw, 2rem); }
+.row:hover::before, .row:focus-visible::before { transform: scaleX(1); }
+.row:hover .row-meta, .row:focus-visible .row-meta { color: color-mix(in oklab, var(--accent-fg) 72%, transparent); }
+.row:hover .row-arrow, .row:focus-visible .row-arrow { opacity: 1; transform: none; }
+
+.row-index {
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.row:hover .row-index, .row:focus-visible .row-index { color: var(--accent-fg); }
+
+.row-title {
+  font-family: var(--font-display);
+  font-size: var(--t-2);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.row-meta {
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: color var(--fast) linear;
+}
+
+.row-sub {
+  grid-column: 2 / -1;
+  max-width: 58ch;
+  font-size: var(--t--1);
+  line-height: 1.65;
+  color: var(--fg-mute);
+}
+.row:hover .row-sub, .row:focus-visible .row-sub { color: color-mix(in oklab, var(--accent-fg) 78%, transparent); }
+
+.row-arrow {
+  opacity: 0;
+  transform: translateX(-0.4rem);
+  transition: opacity var(--fast) linear, transform var(--fast) var(--ease);
+}
+
+@media (max-width: 40rem) {
+  .row { grid-template-columns: auto 1fr; }
+  .row-meta { grid-column: 1 / -1; }
+  .row-arrow { display: none; }
+}
+
+/* ── 此刻 ── */
+.now-list { display: grid; gap: 0; border-top: 1px solid var(--line-soft); }
+.now-item {
+  display: grid;
+  gap: 0.15rem 2rem;
+  padding-block: 1.1rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+@media (min-width: 40rem) {
+  .now-item { grid-template-columns: 6rem 1fr; align-items: baseline; }
+}
+.now-item dt {
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.now-item dd { margin: 0; text-wrap: pretty; }
+
+/* ── 按钮 ── */
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.42rem 0.8rem;
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  text-decoration: none;
+  background: transparent;
+  transition: color var(--fast) linear, border-color var(--fast) linear, background var(--fast) linear;
+}
+.action:hover,
+.action:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.action--solid {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+.action--solid:hover { color: var(--accent-fg); filter: brightness(1.08); }
+.action kbd {
+  font-family: inherit;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--fg-mute);
+  transition: color var(--fast) linear, border-color var(--fast) linear;
+}
+.icon-btn:hover, .icon-btn:focus-visible { color: var(--accent); border-color: var(--accent); }
+.icon-btn svg { width: 1rem; height: 1rem; }
+// 夜里显示月亮，昼间显示太阳
+html.dark .icon-btn .sun { display: none; }
+html:not(.dark) .icon-btn .moon { display: none; }
+
+/* 宽屏用文字按钮，窄屏收成一个放大镜图标——
+   否则 390px 宽度下导航会被挤成两行。
+   基础规则必须写在媒体查询前面，否则同优先级下后者赢，图标永远出不来。 */
+.action--search .icon {
+  display: none;
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (max-width: 34rem) {
+  .action--search {
+    padding: 0;
+    width: 2.1rem;
+    height: 2.1rem;
+    justify-content: center;
+  }
+
+  .action--search .label,
+  .action--search kbd { display: none; }
+  .action--search .icon { display: block; }
+}
+
+/* ── 标签 ── */
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tag {
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.06em;
+  color: var(--fg-mute);
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  text-decoration: none;
+  transition: color var(--fast) linear, border-color var(--fast) linear;
+}
+.tag::before { content: '#'; opacity: 0.5; }
+.tag:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ── 命令面板 ── */
+.palette {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: start center;
+  padding: clamp(3rem, 12vh, 9rem) 1rem 2rem;
+  background: color-mix(in oklab, var(--bg-sunk) 72%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--fast) linear, visibility var(--fast) linear;
+}
+.palette[data-open='true'] { opacity: 1; visibility: visible; }
+
+.palette-panel {
+  width: min(100%, 42rem);
+  background: var(--bg-raise);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  box-shadow: 0 40px 90px -30px rgb(0 0 0 / 0.6);
+  overflow: hidden;
+  transform: translateY(-0.6rem) scale(0.99);
+  transition: transform var(--slow) var(--ease);
+}
+.palette[data-open='true'] .palette-panel { transform: none; }
+
+.palette-field {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+}
+.palette-field span { color: var(--accent); font-family: var(--font-mono); }
+.palette-field input {
+  flex: 1;
+  background: none;
+  border: 0;
+  outline: none;
+  font-size: var(--t-0);
+}
+.palette-field input::placeholder { color: var(--fg-faint); }
+
+.palette-list {
+  max-height: min(52vh, 26rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.palette-group {
+  padding: 0.7rem 1.1rem 0.3rem;
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+.palette-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.6rem 1.1rem;
+  text-align: left;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+.palette-item[aria-selected='true'] {
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  border-left-color: var(--accent);
+}
+.palette-item em { font-style: normal; color: var(--accent); }
+.palette-item .hint {
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  color: var(--fg-faint);
+  white-space: nowrap;
+}
+.palette-empty { padding: 1.6rem 1.1rem; color: var(--fg-mute); }
+.palette-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.6rem 1.1rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--t--2);
+  color: var(--fg-faint);
+  background: var(--bg-sunk);
+}
+
+/* ── 阅读进度 ── */
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  height: 2px;
+  width: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* ── 入场 ──
+   只在 .js 存在时才藏起来。脚本没跑（或者挂了），内容照样在页面上——
+   一个内容站点绝不能因为一行 JavaScript 出错就变成空白。 */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(1.1rem);
+  transition: opacity var(--slow) var(--ease), transform var(--slow) var(--ease);
+}
+.js [data-reveal].is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { opacity: 1; transform: none; }
+}

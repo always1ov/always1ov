@@ -1,0 +1,47 @@
+/* ── reset ──────────────────────────────────────────────────────
+   只压掉浏览器默认样式里真正碍事的部分，不做全量归零。 */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  tab-size: 2;
+}
+
+body { min-height: 100svh; }
+
+img, svg, video, canvas { display: block; max-width: 100%; }
+img, video { height: auto; }
+
+input, button, textarea, select { font: inherit; color: inherit; }
+
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+a { color: inherit; }
+
+ul, ol { padding: 0; list-style: none; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+
+:where(h1, h2, h3, h4, h5, h6) { font-size: inherit; font-weight: inherit; }
+
+hr { border: 0; }
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
