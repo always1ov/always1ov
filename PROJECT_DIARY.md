@@ -8,10 +8,10 @@
 ## 当前状态（Current State）
 
 - **阶段**：站点重做完成，等待首次部署
-- **最后改动**：2026-08-21 全站重做 + 修好社交卡片元信息
+- **最后改动**：2026-08-21 铺好 Cloudflare 部署（两条路）、产物瘦身一半
 - **CI 状态**：build job 全绿（run #6）；deploy job 停在凭据检查上，等用户配 Cloudflare
 - **部署 URL**：待首次部署后确认（计划 `https://always1ov.pages.dev`）
-- **进行中的任务**：用户在 Cloudflare 建 Pages 项目并配好 3 个 Secrets/Variables，触发首次部署
+- **进行中的任务**：用户在 Cloudflare Dashboard 用 Git 集成建 Pages 项目（推荐路径，无需密钥）
 - **分支约定**：`main` 即生产分支
 
 ## 关键事实（Key Facts）
@@ -148,3 +148,28 @@ Valaxy 默认把 `og:image` 指向 `/favicon.svg`（相对路径 + SVG，各家�
 
 **CI**：run #6 的 build job 全部通过（安装 / 构建 / 产物校验 / 上传，共 28 秒）。
 deploy job 停在凭据检查上并给出明确报错——符合预期，等用户配好 Cloudflare 那三个值。
+
+### 2026-08-21 — 铺好 Cloudflare 部署，产物瘦身一半
+
+**部署**：改成两条路并存，用户选一条即可。
+
+- 加 `.node-version`（`22.12.0`）。Cloudflare Pages 默认的 Node 版本达不到 Valaxy 的
+  `>=22.12` 要求，不钉死的话 Git 集成一定构建失败 —— 这是走那条路的必要前提。
+- Actions 的 deploy job 改成 `if: vars.CLOUDFLARE_PROJECT_NAME != ''`。
+  没配变量就整个跳过，而不是失败。这样用 Git 集成的人不会在每次提交上看到红叉。
+- README 重写「部署」一节，两条路都给了逐步说明，外加绑自定义域名的提醒
+  （换域名要同步改 `site.config.ts` 的 `url`，RSS / sitemap / 社交卡片的绝对地址都从那取）。
+
+**瘦身**：产物 2.3MB / 138 文件 → **1.1MB / 79 文件**。
+
+- KaTeX 的字体占了整整 1.2MB。`features.katex: false` 只关掉客户端特性，样式表仍被无条件
+  引入（Valaxy 的判断是 `!config.math`，唯一的官方关法是改用 MathJax）。
+  用一个 8 行的 Vite 插件把 `katex/dist/katex.min.css` 解析成空模块，字体随之消失。
+  浏览器本来也不会去下这些字体（没有匹配排版就不触发 `@font-face`），
+  但没必要为一个用不到的功能背这个包。
+
+**其他**：站内链接统一去掉尾斜杠（`/about/` → `/about`），Valaxy 生成的是 `about.html`，
+带斜杠要多走一次 301。
+
+**验证**：`npm run typecheck` 无错误；首页 / 文章 / 关于三页重新截图核对，控制台无报错，
+目录、代码复制、表格容器均正常。

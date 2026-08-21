@@ -17,7 +17,7 @@ description: 关于我，关于这个站，以及它是怎么造出来的。
 
 它没有评论区、没有访问统计、没有 cookie 提示——因为没有 cookie。你在这里读到的东西不会被记录，也不会被推荐给谁。
 
-- **写作**：[全部文章](/posts/)，更新很慢
+- **写作**：[全部文章](/posts)，更新很慢
 - **订阅**：[RSS](/atom.xml)，最原始也最可靠的方式
 - **搜索**：任意页面按 <kbd>⌘</kbd> <kbd>K</kbd>（Windows 上是 <kbd>Ctrl</kbd> <kbd>K</kbd>），或者直接按斜杠
 
@@ -32,7 +32,7 @@ description: 关于我，关于这个站，以及它是怎么造出来的。
 | 部署 | GitHub Actions → Cloudflare Pages |
 | 源码 | [github.com/always1ov/always1ov](https://github.com/always1ov/always1ov) |
 
-想知道细节的话，我写过两篇：[给 Valaxy 写一个只属于自己的主题](/posts/valaxy-custom-theme/)，还有[这个站长这样，是有原因的](/posts/design-notes/)。
+想知道细节的话，我写过两篇：[给 Valaxy 写一个只属于自己的主题](/posts/valaxy-custom-theme)，还有[这个站长这样，是有原因的](/posts/design-notes)。
 
 ::: tip 转载
 文章可以随便转，注明出处和原文链接就行。

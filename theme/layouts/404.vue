@@ -14,7 +14,7 @@
         <AppLink class="action action--solid" to="/">
           回首页 <ArrowRight />
         </AppLink>
-        <AppLink class="action" to="/posts/">
+        <AppLink class="action" to="/posts">
           看看写了什么
         </AppLink>
       </p>

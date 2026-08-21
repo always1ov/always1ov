@@ -83,7 +83,7 @@ const socials = computed(() => theme.value.social.filter(s => s.href))
             <RouterView />
           </ValaxyMd>
           <p style="margin-top: 2rem">
-            <AppLink class="action" to="/about/">
+            <AppLink class="action" to="/about">
               完整的关于页 <ArrowRight />
             </AppLink>
           </p>
@@ -117,7 +117,7 @@ const socials = computed(() => theme.value.social.filter(s => s.href))
             />
           </div>
           <p style="margin-top: 2rem">
-            <AppLink class="action" to="/posts/">
+            <AppLink class="action" to="/posts">
               全部 {{ total }} 篇 <ArrowRight />
             </AppLink>
           </p>

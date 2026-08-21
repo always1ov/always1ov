@@ -21,6 +21,7 @@ useHead({
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..600;1,400&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap',
     },
+    { rel: 'canonical', href: () => abs(route.path) },
   ],
   meta: [
     { name: 'theme-color', content: '#0b0b0c', media: '(prefers-color-scheme: dark)' },
@@ -34,9 +35,6 @@ useHead({
     { property: 'og:image:height', content: '630' },
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:image', content: () => abs('og.png') },
-  ],
-  link: [
-    { rel: 'canonical', href: () => abs(route.path) },
   ],
 })
 </script>

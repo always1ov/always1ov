@@ -11,8 +11,8 @@ export const defaultThemeConfig: ThemeConfig = {
   now: { updated: '', items: [] },
   nav: [
     { path: '/', label: '首页' },
-    { path: '/posts/', label: '写作' },
-    { path: '/about/', label: '关于' },
+    { path: '/posts', label: '写作' },
+    { path: '/about', label: '关于' },
   ],
   social: [],
   homePostCount: 5,

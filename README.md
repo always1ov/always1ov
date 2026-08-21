@@ -74,15 +74,51 @@ description: 列表里显示的那句话。不写会自动摘录第一段。
 
 推到 `main`，GitHub Actions 会构建并部署到 Cloudflare Pages。
 
-## 部署
+## 部署到 Cloudflare Pages
 
-需要在仓库里配三个值：
+两条路，选一条就行。**推荐第一条**：不用管密钥，Cloudflare 自己拉代码构建。
+
+### 一、Cloudflare 的 Git 集成（推荐）
+
+1. 打开 [Cloudflare Dashboard](https://dash.cloudflare.com) → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
+2. 授权 GitHub，选中 `always1ov/always1ov`
+3. 构建配置照下面填：
+
+   | 字段 | 填什么 |
+   | --- | --- |
+   | Framework preset | `None` |
+   | Build command | `npm run build` |
+   | Build output directory | `dist` |
+   | Root directory | 留空 |
+
+   Node 版本不用手填 —— 仓库里的 `.node-version` 已经钉死 22.12.0（Valaxy 的硬要求，
+   Cloudflare 默认的 Node 太老，会构建失败）。
+
+4. **Save and Deploy**
+
+以后每次 push 到 `main` 自动部署，PR 自动生成预览地址。仓库里一个密钥都不用配。
+
+### 二、GitHub Actions + Wrangler
+
+想把部署留在自己的 CI 里就走这条。需要配三个值：
 
 | 位置 | 名称 |
 | --- | --- |
-| Settings → Secrets | `CLOUDFLARE_API_TOKEN` |
-| Settings → Secrets | `CLOUDFLARE_ACCOUNT_ID` |
-| Settings → Variables | `CLOUDFLARE_PROJECT_NAME` |
+| Settings → Secrets and variables → Actions → **Secrets** | `CLOUDFLARE_API_TOKEN` |
+| Settings → Secrets and variables → Actions → **Secrets** | `CLOUDFLARE_ACCOUNT_ID` |
+| Settings → Secrets and variables → Actions → **Variables** | `CLOUDFLARE_PROJECT_NAME` |
+
+API Token 在 Cloudflare 的 **My Profile → API Tokens** 建，权限选 `Cloudflare Pages: Edit`。
+Account ID 在任意域名的概览页右侧能看到。
+
+配好之后 push 一次即可。**没配 `CLOUDFLARE_PROJECT_NAME` 时部署那步会自动跳过**，
+不会在每次提交上留一个红叉 —— 所以走第一条路的话，这里什么都不用动。
+
+### 绑自定义域名
+
+Pages 项目建好后：**Custom domains** → **Set up a custom domain**，填你的域名，
+按提示把 DNS 记录指过去。之后记得把 `site.config.ts` 里的 `url` 改成新域名
+（RSS、sitemap、社交卡片的绝对地址都从那里取）。
 
 ---
 

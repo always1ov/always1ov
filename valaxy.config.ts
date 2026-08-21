@@ -60,8 +60,8 @@ export default defineValaxyConfig<ThemeConfig>({
 
     nav: [
       { path: '/', label: '首页' },
-      { path: '/posts/', label: '写作' },
-      { path: '/about/', label: '关于' },
+      { path: '/posts', label: '写作' },
+      { path: '/about', label: '关于' },
     ],
 
     // 首页 02「此刻」。手动维护——写你现在真正在干的事，别写成简历。
@@ -116,6 +116,35 @@ export default defineValaxyConfig<ThemeConfig>({
         state.tokens[idx + 1].children?.unshift(...linkTokens)
       },
     },
+  },
+
+  // 这个站不写数学公式。
+  features: {
+    katex: false,
+  },
+
+  vite: {
+    plugins: [
+      /**
+       * 把 KaTeX 的样式表换成空的。
+       *
+       * `features.katex: false` 只关掉了客户端特性，样式表仍然被无条件引入
+       * （Valaxy 那边的判断是 `!config.math`，唯一的关法是改用 MathJax）。
+       * 那张表会带进 1.2MB 的字体文件——占了整个产物的一半。
+       * 浏览器确实不会去下这些字体（没有匹配的排版就不触发 @font-face），
+       * 但没必要为一个用不到的功能背这个包。
+       */
+      {
+        name: 'always:drop-katex',
+        enforce: 'pre' as const,
+        resolveId(id: string) {
+          return id.includes('katex/dist/katex.min.css') ? '\0always-empty.css' : null
+        },
+        load(id: string) {
+          return id === '\0always-empty.css' ? '' : null
+        },
+      },
+    ],
   },
 
   // 生成 RSS

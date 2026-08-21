@@ -48,10 +48,13 @@ jobs:
           path: dist
           retention-days: 7
 
+  # 只有配了 CLOUDFLARE_PROJECT_NAME 变量时才跑。
+  # 如果用的是 Cloudflare 的 Git 集成（由 Cloudflare 自己拉代码构建），
+  # 这个 job 会整个跳过，不会在每次提交上留一个红叉。
   deploy:
     name: 部署到 Cloudflare Pages
     needs: build
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && vars.CLOUDFLARE_PROJECT_NAME != ''
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -85,11 +88,7 @@ jobs:
           PROJECT_NAME: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
-            echo "::error::缺少 CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID（仓库 Settings → Secrets）"
-            exit 1
-          fi
-          if [ -z "$PROJECT_NAME" ]; then
-            echo "::error::缺少变量 CLOUDFLARE_PROJECT_NAME（仓库 Settings → Variables）"
+            echo "::error::配了 CLOUDFLARE_PROJECT_NAME 却缺 CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID，去仓库 Settings → Secrets 补上"
             exit 1
           fi
           npx wrangler pages deploy ./dist \

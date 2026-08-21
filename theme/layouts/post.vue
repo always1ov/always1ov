@@ -98,7 +98,7 @@ useSchemaOrg(defineArticle({
           <p class="mono">
             写于 {{ date.cn }}<template v-if="updated"> · 修订于 {{ updated.cn }}</template>
           </p>
-          <AppLink class="action" to="/posts/">
+          <AppLink class="action" to="/posts">
             回到全部文章 <ArrowRight />
           </AppLink>
         </footer>

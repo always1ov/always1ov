@@ -9,7 +9,10 @@
 - 类型：个人网站（Valaxy 静态站点）
 - 主题：`valaxy-theme-always`，**自写，就在本仓库的 `theme/` 目录**，不是 npm 依赖
 - 线上：https://always1ov.pages.dev
-- 部署：push 到 `main` → GitHub Actions → Cloudflare Pages
+- 部署：Cloudflare Pages。两条路并存 —— Cloudflare 的 Git 集成（推荐，无需密钥），
+  或 GitHub Actions + Wrangler（配了 `CLOUDFLARE_PROJECT_NAME` 变量才会跑，否则整个 job 跳过）。
+  详见 README「部署到 Cloudflare Pages」。
+- Node 版本由 `.node-version` 钉死在 22.12.0，Cloudflare 和 CI 都读它
 
 ## 2. 环境
 
@@ -65,6 +68,8 @@ npm run banner    # 重新生成 README 横幅（改了配色才需要）
 - **跟「今天」有关的值要放进 `<ClientOnly>`**。构建时和访问时不是同一天，否则 hydration 对不上。
 - **Shiki 只加载 `markdown.languages` 里列出来的语言**。没列的语言不会报错，只是不高亮。
 - **Valaxy 会从 git 补 `date` 和 `updated`**。不想被当成文章的页面（比如归档页自己）要写 `hide: all`。
+- **KaTeX 的样式表是被无条件引入的**（Valaxy 那边只认 `!config.math`）。这个站不写公式，
+  所以 `valaxy.config.ts` 里用一个 Vite 插件把它换成空模块，省掉 1.2MB 字体。要写公式就删掉那个插件。
 
 ## 7. 改完之后要做的事
 
