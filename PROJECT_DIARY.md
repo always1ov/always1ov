@@ -8,7 +8,8 @@
 ## 当前状态（Current State）
 
 - **阶段**：站点重做完成，等待首次部署
-- **最后改动**：2026-08-21 全站重做——换掉现成主题，改用自写主题 `valaxy-theme-always`
+- **最后改动**：2026-08-21 全站重做 + 修好社交卡片元信息
+- **CI 状态**：build job 全绿（run #6）；deploy job 停在凭据检查上，等用户配 Cloudflare
 - **部署 URL**：待首次部署后确认（计划 `https://always1ov.pages.dev`）
 - **进行中的任务**：用户在 Cloudflare 建 Pages 项目并配好 3 个 Secrets/Variables，触发首次部署
 - **分支约定**：`main` 即生产分支
@@ -133,3 +134,17 @@
 **验证**：`npm ci` 干净安装后 `npm run build` 通过；用 Chromium 逐页截图核对了首页 / 文章 / 归档 / 关于 / 404 / 命令面板，以及夜间、日间和 390px 移动端三种情况；控制台无报错、无 hydration mismatch。
 
 **遗留**：见「待办」。核心是用户需要按自己的实际情况改文案，并完成 Cloudflare 侧的配置。
+
+### 2026-08-21 — 修好社交分享卡片
+
+Valaxy 默认把 `og:image` 指向 `/favicon.svg`（相对路径 + SVG，各家平台都不认），
+`og:url` 则固定成站点根地址，导致每篇文章分享出去都指向首页。
+
+- `theme/App.vue` 里覆盖 `og:url` / `og:image` / `twitter:image` / `canonical`，全部用绝对地址
+- `theme/layouts/post.vue` 补 `og:type: article`
+- `scripts/banner.mjs` 改名 `scripts/artwork.mjs`，除 README 横幅外还生成 `public/og.png`
+  （1200×630，手写 PNG 编码 + `node:zlib`，画的是同一片流场）
+- 顺带修完 `vue-tsc` 的 26 个类型错误，现在 `npm run typecheck` 是干净的
+
+**CI**：run #6 的 build job 全部通过（安装 / 构建 / 产物校验 / 上传，共 28 秒）。
+deploy job 停在凭据检查上并给出明确报错——符合预期，等用户配好 Cloudflare 那三个值。

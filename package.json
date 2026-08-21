@@ -16,7 +16,7 @@
     "preview": "vite preview",
     "rss": "valaxy rss",
     "typecheck": "vue-tsc --noEmit",
-    "banner": "node scripts/banner.mjs"
+    "artwork": "node scripts/artwork.mjs"
   },
   "dependencies": {
     "valaxy": "1.0.0-rc.1"

@@ -3,6 +3,7 @@
  * 文章页。左边正文，右边目录，顶上一条朱红的阅读进度。
  */
 import { defineArticle, useSchemaOrg } from '@unhead/schema-org/vue'
+import { useHead } from '@unhead/vue'
 import { useFrontmatter, usePrevNext, useSiteConfig } from 'valaxy'
 import { computed } from 'vue'
 import { formatDate } from '../composables'
@@ -27,6 +28,13 @@ const tags = computed(() => {
 
 // frontmatter 的字段可能是 i18n 对象（{ 'zh-CN': '…' }），schema-org 只收字符串
 const asText = (value: unknown) => (typeof value === 'string' ? value : undefined)
+
+useHead({
+  meta: [
+    { property: 'og:type', content: 'article' },
+    { property: 'article:published_time', content: () => String(frontmatter.value.date ?? '') },
+  ],
+})
 
 useSchemaOrg(defineArticle({
   '@type': 'BlogPosting',
